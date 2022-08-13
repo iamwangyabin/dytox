@@ -5,7 +5,7 @@
 # Model definition
 model: ptvit
 input_size: 224
-dytox_ptconvit: true
+dytox_pretrain: true
 
 #batch_size: 64
 #incremental_batch_size: 64

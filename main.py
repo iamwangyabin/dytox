@@ -491,7 +491,7 @@ def main(args):
         # ----------------------------------------------------------------------
         # Adding new parameters to handle the new classes
         print("Adding new parameters")
-        if task_id > 0 and not args.dytox and not args.dytox_ptconvit:
+        if task_id > 0 and not args.dytox and not args.dytox_pretrain:
             model_without_ddp.head.add_classes()
 
         if task_id > 0:

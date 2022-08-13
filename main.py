@@ -483,6 +483,8 @@ def main(args):
         # Ensembling
         if args.dytox:
             model_without_ddp = factory.update_dytox(model_without_ddp, task_id, args)
+        elif args.dytox_pretrain:
+            model_without_ddp = factory.update_dytox_pretrain(model_without_ddp, task_id, args)
         # ----------------------------------------------------------------------
 
         # ----------------------------------------------------------------------

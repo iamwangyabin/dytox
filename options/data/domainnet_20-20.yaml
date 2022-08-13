@@ -1,0 +1,5 @@
+data_set: domainnet
+initial_increment: 20
+increment: 20
+
+log_category: 20-20

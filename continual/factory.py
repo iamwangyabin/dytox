@@ -131,3 +131,20 @@ def update_dytox(model_without_ddp, task_id, args):
         model_without_ddp.add_model(args.increment)
 
     return model_without_ddp
+
+
+def update_dytox_pretrain(model_without_ddp, task_id, args):
+    if task_id == 0:
+        print(f'Creating DyTox!')
+        model_without_ddp = dytox.DyTox_ptvit(
+            model_without_ddp,
+            nb_classes=args.initial_increment,
+            individual_classifier=args.ind_clf,
+            head_div=args.head_div > 0.,
+            head_div_mode=args.head_div_mode,
+            joint_tokens=args.joint_tokens
+        )
+    else:
+        print(f'Updating ensemble, new embed dim {model_without_ddp.embed_dim}.')
+        model_without_ddp.add_model(args.increment)
+    return model_without_ddp

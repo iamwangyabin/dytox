@@ -416,3 +416,90 @@ def eval_training_finetuning(mode, in_ft):
     if 'ft' in mode and in_ft:
         return True
     return False
+
+
+
+
+from continual.convit import ClassAttention, Block
+
+class DyTox_ptvit(DyTox):
+    def __init__(
+        self,
+        transformer,
+        nb_classes,
+        individual_classifier='',
+        head_div=False,
+        head_div_mode=['tr', 'ft'],
+        joint_tokens=False
+    ):
+        super().__init__(transformer, nb_classes,superclass=False)
+
+        self.nb_classes = nb_classes
+        self.embed_dim = transformer.embed_dim
+        self.individual_classifier = individual_classifier
+        self.use_head_div = head_div
+        self.head_div_mode = head_div_mode
+        self.head_div = None
+        self.joint_tokens = joint_tokens
+        self.in_finetuning = False
+
+        self.nb_classes_per_task = [nb_classes]
+
+        self.patch_embed = transformer.patch_embed
+        self.pos_embed = transformer.pos_embed
+        self.pos_drop = transformer.pos_drop
+        self.cls_token = transformer.cls_token
+        self.sabs = transformer.blocks[:10]
+
+        self.tabs = nn.ModuleList([Block(dim = transformer.embed_dim, num_heads=transformer.num_heads, mlp_ratio = transformer.mlp_ratio,
+                qkv_bias = transformer.qkv_bias, qk_scale=transformer.qk_scale, drop = transformer.drop_rate,
+                attn_drop = transformer.attn_drop_rate, norm_layer=transformer.norm_layer,
+                attention_type=ClassAttention)]).cuda()#.to(transformer.device)
+
+        self.task_tokens = nn.ParameterList([copy.deepcopy(transformer.cls_token)]).cuda()
+
+        if self.individual_classifier != '':
+            in_dim, out_dim = self._get_ind_clf_dim()
+            self.head = nn.ModuleList([
+                ContinualClassifier(in_dim, out_dim).cuda()
+            ])
+        else:
+            self.head = ContinualClassifier(
+                self.embed_dim * len(self.task_tokens), sum(self.nb_classes_per_task)
+            ).cuda()
+
+    def forward_features(self, x):
+        # Shared part, this is the ENCODER
+        B = x.shape[0]
+        x = self.patch_embed(x)
+        cls_token = self.cls_token.expand(x.shape[0], -1, -1)  # stole cls_tokens impl from Phil Wang, thanks
+        x = torch.cat((cls_token, x), dim=1)
+        x = x + self.pos_embed
+        x = self.pos_drop(x)
+
+        for blk in self.sabs:
+            x = blk(x)
+
+        # Specific part, this is what we called the "task specific DECODER"
+        if self.joint_tokens:
+            return self.forward_features_jointtokens(x)
+
+        tokens = []
+        attentions = []
+        mask_heads = None
+
+        for task_token in self.task_tokens:
+            task_token = task_token.expand(B, -1, -1)
+
+            ca_blocks = self.tabs
+
+            for blk in ca_blocks:
+                task_token, attn, v = blk(torch.cat((task_token, x), dim=1), mask_heads=mask_heads)
+
+            attentions.append(attn)
+            tokens.append(task_token[:, 0])
+
+        self._class_tokens = tokens
+        return tokens, tokens[-1], attentions
+
+

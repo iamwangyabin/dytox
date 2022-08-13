@@ -432,7 +432,7 @@ class DyTox_ptvit(DyTox):
         head_div_mode=['tr', 'ft'],
         joint_tokens=False
     ):
-        super().__init__(transformer, nb_classes,superclass=False)
+        super().__init__(transformer, nb_classes)
 
         self.nb_classes = nb_classes
         self.embed_dim = transformer.embed_dim

@@ -6,6 +6,7 @@
 model: ptvit
 input_size: 224
 dytox_pretrain: true
+dytox: false
 
 #batch_size: 64
 #incremental_batch_size: 64
@@ -35,7 +36,6 @@ finetuning_epochs: 20
 ft_no_sampling: true
 
 # Dytox model
-dytox: true
 freeze_task: [old_task_tokens, old_heads]
 freeze_ft: [sab]
 

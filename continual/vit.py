@@ -258,10 +258,10 @@ class VisionTransformer(nn.Module):
         self.qk_scale = qk_scale
         self.drop_rate = drop_rate
         self.attn_drop_rate = attn_drop_rate
-        self.norm_layer = norm_layer 
 
         norm_layer = norm_layer or partial(nn.LayerNorm, eps=1e-6)
         act_layer = act_layer or nn.GELU
+        self.norm_layer = norm_layer
 
         self.patch_embed = embed_layer(
             img_size=img_size, patch_size=patch_size, in_chans=in_chans, embed_dim=embed_dim)

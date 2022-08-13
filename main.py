@@ -201,6 +201,7 @@ def get_args_parser():
     # DyTox related
     parser.add_argument('--dytox', action='store_true', default=False,
                         help='Enable super DyTox god mode.')
+    parser.add_argument('--dytox_pretrain', action='store_true', default=False, help='Enable super DyTox god mode.')
     parser.add_argument('--ind-clf', default='', choices=['1-1', '1-n', 'n-n', 'n-1'],
                         help='Independent classifier per task but predicting all seen classes')
     parser.add_argument('--joint-tokens', default=False, action='store_true',
@@ -490,7 +491,7 @@ def main(args):
         # ----------------------------------------------------------------------
         # Adding new parameters to handle the new classes
         print("Adding new parameters")
-        if task_id > 0 and not args.dytox:
+        if task_id > 0 and not args.dytox and not args.dytox_ptconvit:
             model_without_ddp.head.add_classes()
 
         if task_id > 0:

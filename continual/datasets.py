@@ -12,6 +12,11 @@ from torchvision import transforms
 from torchvision.datasets.folder import ImageFolder, default_loader
 from torchvision.transforms import functional as Fv
 
+from continuum.datasets import _ContinuumDataset
+from continuum.tasks import TaskType
+from typing import List, Tuple, Union
+import numpy as np
+
 try:
     interpolation = Fv.InterpolationMode.BICUBIC
 except:

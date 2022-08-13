@@ -19,6 +19,10 @@ def get_backbone(args):
             depth=args.depth,
             num_heads=args.num_heads
         )
+    elif args.model == 'ptvit':
+        from continual.vit import vit_base_patch16_224
+        model = vit_base_patch16_224(pretrained=True)
+
     elif args.model == 'convit':
         model = convit.ConVit(
             num_classes=args.nb_classes,

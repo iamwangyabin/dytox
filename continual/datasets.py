@@ -8,7 +8,7 @@ from continuum import ClassIncremental
 from continuum.datasets import CIFAR100, ImageNet100, ImageFolderDataset
 from timm.data import create_transform
 from timm.data.constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
-from torchvision import transforms
+from torchvision import transforms, datasets
 from torchvision.datasets.folder import ImageFolder, default_loader
 from torchvision.transforms import functional as Fv
 

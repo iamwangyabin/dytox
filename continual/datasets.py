@@ -16,6 +16,7 @@ from continuum.datasets import _ContinuumDataset
 from continuum.tasks import TaskType
 from typing import List, Tuple, Union
 import numpy as np
+from PIL import Image
 
 try:
     interpolation = Fv.InterpolationMode.BICUBIC

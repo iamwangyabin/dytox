@@ -239,13 +239,13 @@ class FiveDatasetsDataset(_ContinuumDataset):
 
     @staticmethod
     def _format(raw_data: List[Tuple[str, int]]) -> Tuple[np.ndarray, np.ndarray, None]:
-        x = np.empty(len(raw_data))
+        x = []
         y = np.empty(len(raw_data), dtype=np.int16)
 
         for i, (path, target) in enumerate(raw_data):
-            x[i] = path
+            x.append(path)
             y[i] = target
-
+        x = np.array(x)
         return x, y, None
 
 
